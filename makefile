@@ -1,4 +1,5 @@
 export UNSPLASH_CLIENT_ID ?=
+export UNSPLASH_SLEEP ?= 0
 export TELEGRAM_TOKEN ?=
 export TELEGRAM_CHATS ?=
 export IMAGER_PUBLIC_ADDRESS ?= http://localhost:8081
@@ -9,6 +10,7 @@ run:
 	python3 main.py \
 		--telegram "$(TELEGRAM_TOKEN)" \
 		--unsplash "$(UNSPLASH_CLIENT_ID)" \
+		--unsplash-sleep "$(UNSPLASH_SLEEP)" \
 		--imager-public "$(IMAGER_PUBLIC_ADDRESS)" \
 		--imager-internal "$(IMAGER_INTERNAL_ADDRESS)" \
 		--imager-imsize "$(IMAGER_IMAGE_SIZE)" \

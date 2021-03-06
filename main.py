@@ -43,6 +43,13 @@ def _parse_args() -> Dict:
         help='Unsplash client ID',
     )
     parser.add_argument(
+        '--unsplash-sleep',
+        dest='unsplash_sleep',
+        type=int,
+        default=0,
+        help='Time to wait before downloading unsplash image',
+    )
+    parser.add_argument(
         '--imager-internal',
         dest='imager_internal',
         type=str,
@@ -88,7 +95,11 @@ def main() -> None:
 
     imager_handler = ImagerMessageHandler(
         task_handlers=(
-            UnsplashTaskHandler(args.unsplash, imager_client),
+            UnsplashTaskHandler(
+                client_id=args.unsplash,
+                imager=imager_client,
+                sleep=args.unsplash_sleep,
+            ),
         ),
         allowed_chats=allowed_chats,
     )

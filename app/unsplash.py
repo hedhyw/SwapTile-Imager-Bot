@@ -10,6 +10,7 @@ from io import BytesIO
 import re
 import requests
 import logging
+import time
 
 from app.handler import TaskHandler, Reply
 from app.imager import ImagerClient, ConflictException
@@ -25,13 +26,19 @@ class UnsplashTaskHandler(TaskHandler):
         uploads it to the imager server.
     """
 
-    def __init__(self, client_id: str, imager: ImagerClient) -> None:
+    def __init__(
+        self,
+        client_id: str,
+        imager: ImagerClient,
+        sleep: int,
+    ) -> None:
         self._logger = logging.getLogger('UnsplashTaskHandler')
 
         self._urls_re = re.compile(r'(' + UNSPLASH_PHOTOS_PREFFIX + r'[\w-]+)')
         self._id_re = re.compile(UNSPLASH_PHOTOS_PREFFIX + r'([\w-]+)')
         self._client_id = client_id
         self._imager = imager
+        self._sleep = sleep
 
     def handle(self, category: str, message: str, reply: Reply) -> bool:
         """ Handle telegram message. """
@@ -40,7 +47,10 @@ class UnsplashTaskHandler(TaskHandler):
         if not urls:
             return False
 
-        for url in urls:
+        for i, url in enumerate(urls):
+            if i > 0:
+                time.sleep(self._sleep)
+
             self._logger.debug(f'handling: {url}, category: {category}')
 
             try:
