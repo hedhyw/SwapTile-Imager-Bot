@@ -1,4 +1,7 @@
 # SwapTile-Imager-Bot
+![Version](https://img.shields.io/github/v/tag/ocmoxa/SwapTile-Imager)
+[![Build Status](https://travis-ci.org/ocmoxa/SwapTile-Imager-Bot.svg?branch=main)](https://travis-ci.org/ocmoxa/SwapTile-Imager-Bot)
+
 The bot for uploading images to [SwapTile-Imager](https://github.com/ocmoxa/SwapTile-Imager) by unsplash url.
 
 # Usage:
