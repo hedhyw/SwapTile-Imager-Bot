@@ -4,18 +4,22 @@
 """ General Telegram message handler.
 """
 
-import re
-from typing import Tuple
+from typing import Tuple, Callable, Set
 from abc import ABC
+import re
+import logging
 
 from telegram import Update
+from telegram.parsemode import ParseMode
 from telegram.ext import CallbackContext
+
+Reply = Callable[[str], None]
 
 
 class TaskHandler(ABC):
     """ Interface for subhandlers. """
 
-    def handle(self, category: str, message: str) -> bool:
+    def handle(self, category: str, message: str, reply: Reply) -> bool:
         """ Process message. """
 
 
@@ -25,9 +29,13 @@ class ImagerMessageHandler:
     def __init__(
         self,
         task_handlers: Tuple[TaskHandler],
+        allowed_chats: Set[int],
     ) -> None:
+        self._logger = logging.getLogger('ImagerMessageHandler')
+
         self._category_re = re.compile(r'#(\w+)($|\s)')
         self._task_handlers = task_handlers
+        self._allowed_chats = allowed_chats
 
     def handle_message(
         self,
@@ -38,6 +46,11 @@ class ImagerMessageHandler:
             handler to process.
         """
 
+        if update.message.chat.id not in self._allowed_chats:
+            self._logger.debug(f'unconfigured chat id access {update.chat.id}')
+
+            return
+
         try:
             text = update.message.text
 
@@ -47,15 +60,21 @@ class ImagerMessageHandler:
 
             category = category.group(1)
 
+            def callback(text: str) -> None:
+                return update.message.reply_text(
+                    text,
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                )
+
             for handler in self._task_handlers:
                 handler: TaskHandler
 
-                if handler.handle(category, text):
-                    update.message.reply_text('processed')
+                if handler.handle(category, text, callback):
                     return
 
             raise Exception('no handler found')
 
-        # pylint: disable=broad-except # It exposes the exception to a client.
         except Exception as ex:
+            self._logger.exception(ex)
+
             update.message.reply_text(f'failed to process: {ex}')

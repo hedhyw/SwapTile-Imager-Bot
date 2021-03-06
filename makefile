@@ -1,12 +1,18 @@
 export UNSPLASH_CLIENT_ID ?=
 export TELEGRAM_TOKEN ?=
-export IMAGER_ADDR ?= http://localhost:8081
+export TELEGRAM_CHATS ?=
+export IMAGER_PUBLIC_ADDRESS ?= http://localhost:8081
+export IMAGER_INTERNAL_ADDRESS ?= http://localhost:8081
+export IMAGER_IMAGE_SIZE ?= 1080x1920
 
 run:
 	python3 main.py \
 		--telegram "$(TELEGRAM_TOKEN)" \
-		--unsplash "$(UNSPLASH_CLIENT_ID)"
-		--iamger "$(IMAGER_ADDR)"
+		--unsplash "$(UNSPLASH_CLIENT_ID)" \
+		--imager-public "$(IMAGER_PUBLIC_ADDRESS)" \
+		--imager-internal "$(IMAGER_INTERNAL_ADDRESS)" \
+		--imager-imsize "$(IMAGER_IMAGE_SIZE)" \
+		--allowed-chats "$(TELEGRAM_CHATS)"
 .PHONY: run
 
 prepare:

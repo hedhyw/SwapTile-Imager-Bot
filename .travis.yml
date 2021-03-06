@@ -1,0 +1,19 @@
+language: python
+
+python:
+- "3.9.1"
+
+services:
+- docker
+
+git:
+  depth: 1
+
+notifications:
+  email: false
+
+before_install:
+- make prepare
+
+script:
+- make lint
