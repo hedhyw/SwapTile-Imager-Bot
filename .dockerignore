@@ -1,0 +1,4 @@
+.git
+.pylintrc
+.gitignore
+Dockerfile

@@ -1,0 +1,5 @@
+[MASTER]
+disable=R0903,C0330
+string-quote=single
+triple-quote=double
+docstring-quote=double
