@@ -65,7 +65,7 @@ class ImagerMessageHandler:
 
             def callback(text: str) -> None:
                 return update.message.reply_text(
-                    escape_markdown(f'#swaptile #{category}\n') + text,
+                    escape_markdown(f'\\#swaptile \\#{category}\n') + text,
                     parse_mode=ParseMode.MARKDOWN_V2,
                 )
 
