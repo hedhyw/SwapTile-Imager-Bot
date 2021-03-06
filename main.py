@@ -81,8 +81,10 @@ def main() -> None:
         download_size=args.imager_imsize,
     )
 
-    allowed_chats = args.allowed_chats.split(',')
-    allowed_chats = set(map(int, allowed_chats))
+    allowed_chats = set()
+    if args.allowed_chats != '':
+        allowed_chats = args.allowed_chats.split(',')
+        allowed_chats = set(map(int, allowed_chats))
 
     imager_handler = ImagerMessageHandler(
         task_handlers=(

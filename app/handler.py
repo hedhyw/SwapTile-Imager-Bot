@@ -12,6 +12,7 @@ import logging
 from telegram import Update
 from telegram.parsemode import ParseMode
 from telegram.ext import CallbackContext
+from telegram.utils.helpers import escape_markdown
 
 Reply = Callable[[str], None]
 
@@ -29,7 +30,7 @@ class ImagerMessageHandler:
     def __init__(
         self,
         task_handlers: Tuple[TaskHandler],
-        allowed_chats: Set[int],
+        allowed_chats: Set[int] = set(),
     ) -> None:
         self._logger = logging.getLogger('ImagerMessageHandler')
 
@@ -46,8 +47,10 @@ class ImagerMessageHandler:
             handler to process.
         """
 
-        if update.message.chat.id not in self._allowed_chats:
-            self._logger.debug(f'unconfigured chat id access {update.chat.id}')
+        if len(self._allowed_chats) == 0:
+            self._logger.warn('allowed chats not set')
+        elif update.message.chat.id not in self._allowed_chats:
+            self._logger.warn(f'unconfigured chat id access {update}')
 
             return
 
@@ -77,4 +80,6 @@ class ImagerMessageHandler:
         except Exception as ex:
             self._logger.exception(ex)
 
-            update.message.reply_text(f'failed to process: {ex}')
+            update.message.reply_text(
+                f'failed to process: {escape_markdown(str(ex))}',
+            )

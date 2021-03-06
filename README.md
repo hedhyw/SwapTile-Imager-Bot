@@ -9,7 +9,8 @@ The bot for uploading images to [SwapTile-Imager](https://github.com/ocmoxa/Swap
 ```sh
 export UNSPLASH_CLIENT_ID=<YOUR_UNSPLASH_CLIENT_ID>
 export TELEGRAM_TOKEN=<YOUR_TG_TOKEN>
-export IMAGER_ADDR=http://localhost:8081
+export IMAGER_INTERNAL_ADDRESS ?= http://localhost:8081
+# More params see in the makefile.
 
 make prepare
 make run
