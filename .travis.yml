@@ -3,6 +3,11 @@ language: go
 python:
 - "3.9.1"
 
+addons:
+  apt:
+    packages:
+    - "python3-pip"
+
 services:
 - docker
 
