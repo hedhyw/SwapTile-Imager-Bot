@@ -10,7 +10,7 @@ import logging
 import argparse
 from typing import Dict
 
-from telegram.ext import Updater, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler
 
 from app.handler import ImagerMessageHandler
 from app.unsplash import UnsplashTaskHandler
@@ -29,6 +29,13 @@ def _parse_args() -> Dict:
         help='Telegram access token',
     )
     parser.add_argument(
+        '--allowed-chats',
+        dest='allowed_chats',
+        type=str,
+        required=True,
+        help='Comma-separated chat ids in which the bot will work',
+    )
+    parser.add_argument(
         '--unsplash',
         dest='unsplash',
         type=str,
@@ -36,11 +43,25 @@ def _parse_args() -> Dict:
         help='Unsplash client ID',
     )
     parser.add_argument(
-        '--imager',
-        dest='imager',
+        '--imager-internal',
+        dest='imager_internal',
         type=str,
         default='http://localhost:8081',
         help='Imager address to upload images',
+    )
+    parser.add_argument(
+        '--imager-public',
+        dest='imager_public',
+        type=str,
+        default='http://localhost:8081',
+        help='Imager address to download images',
+    )
+    parser.add_argument(
+        '--imager-imsize',
+        dest='imager_imsize',
+        type=str,
+        default='1080x1920',
+        help='Imager image size to download',
     )
     return parser.parse_args()
 
@@ -54,18 +75,26 @@ def main() -> None:
     )
     args = _parse_args()
 
-    imager_client = ImagerClient(args.imager)
+    imager_client = ImagerClient(
+        internal_addr=args.imager_internal,
+        public_addr=args.imager_public,
+        download_size=args.imager_imsize,
+    )
+
+    allowed_chats = args.allowed_chats.split(',')
+    allowed_chats = set(map(int, allowed_chats))
 
     imager_handler = ImagerMessageHandler(
         task_handlers=(
             UnsplashTaskHandler(args.unsplash, imager_client),
         ),
+        allowed_chats=allowed_chats,
     )
 
     updater = Updater(args.telegram, use_context=True)
     updater.dispatcher.add_handler(
-        MessageHandler(
-            Filters.text,
+        CommandHandler(
+            'start',
             imager_handler.handle_message,
         ),
     )

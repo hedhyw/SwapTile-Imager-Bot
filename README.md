@@ -17,6 +17,8 @@ make run
 
 Open a chat with the bot and send the message like this:
 ```
+/start
+
 #category_name
 
 https://unsplash.com/photos/0m-cPyH_WDU
