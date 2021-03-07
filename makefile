@@ -5,6 +5,7 @@ export TELEGRAM_CHATS ?=
 export IMAGER_PUBLIC_ADDRESS ?= http://localhost:8081
 export IMAGER_INTERNAL_ADDRESS ?= http://localhost:8081
 export IMAGER_IMAGE_SIZE ?= 1080x1920
+export IMAGER_IMAGE_FORMAT ?= JPEG
 
 run:
 	python3 main.py \
@@ -14,6 +15,7 @@ run:
 		--imager-public "$(IMAGER_PUBLIC_ADDRESS)" \
 		--imager-internal "$(IMAGER_INTERNAL_ADDRESS)" \
 		--imager-imsize "$(IMAGER_IMAGE_SIZE)" \
+		--imager-imformat "$(IMAGER_IMAGE_FORMAT)" \
 		--allowed-chats "$(TELEGRAM_CHATS)"
 .PHONY: run
 

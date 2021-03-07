@@ -13,9 +13,8 @@ from PIL import Image
 
 API_PATH_UPLOAD = '/internal/api/v1/images'
 API_PATH_DOWNLOAD_TMPL = '/api/v1/images/{id}/{size}'
-OUT_IMAGE_NAME = 'image.webp'
-OUT_IMAGE_MIMETYPE = 'image/webp'
-OUT_IMAGE_FORMAT = 'WebP'
+OUT_IMAGE_NAME_PREFFIX = 'image.'
+OUT_IMAGE_MIMETYPE_PREFFIX = 'image/'
 
 
 class ConflictException(Exception):
@@ -30,12 +29,14 @@ class ImagerClient:
         internal_addr: str,
         public_addr: str,
         download_size: str,
+        format: str,
     ) -> None:
         self._logger = logging.getLogger('ImagerClient')
 
         self._url_upload = internal_addr + API_PATH_UPLOAD
         self._url_download_tmpl = public_addr + API_PATH_DOWNLOAD_TMPL
         self._download_size = download_size
+        self._format = format
 
     def upload_image(
         self,
@@ -49,7 +50,7 @@ class ImagerClient:
 
         image = Image.open(image_bytes)
         converted_image_bytes = io.BytesIO()
-        image.save(converted_image_bytes, OUT_IMAGE_FORMAT)
+        image.save(converted_image_bytes, self._format)
         converted_image_bytes.seek(0)
 
         data = {
@@ -65,9 +66,9 @@ class ImagerClient:
             self._url_upload,
             files={
                 'image': (
-                    OUT_IMAGE_NAME,
+                    OUT_IMAGE_NAME_PREFFIX+self._format.lower(),
                     converted_image_bytes,
-                    OUT_IMAGE_MIMETYPE,
+                    OUT_IMAGE_MIMETYPE_PREFFIX+self._format.lower(),
                 ),
             },
             data=data,

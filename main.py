@@ -70,6 +70,13 @@ def _parse_args() -> Dict:
         default='1080x1920',
         help='Imager image size to download',
     )
+    parser.add_argument(
+        '--imager-imformat',
+        dest='imager_imformat',
+        type=str,
+        default='JPEG',
+        help='Output image format',
+    )
     return parser.parse_args()
 
 
@@ -86,6 +93,7 @@ def main() -> None:
         internal_addr=args.imager_internal,
         public_addr=args.imager_public,
         download_size=args.imager_imsize,
+        format=args.imager_imformat.upper(),
     )
 
     allowed_chats = set()
