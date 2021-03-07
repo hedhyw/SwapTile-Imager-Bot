@@ -54,7 +54,13 @@ class UnsplashTaskHandler(TaskHandler):
             self._logger.debug(f'handling: {url}, category: {category}')
 
             try:
-                self._handle_url(category, url, reply)
+                self._handle_url(
+                    category=category,
+                    url=url,
+                    reply=reply,
+                    num=i+1,
+                    total=len(urls),
+                )
             except Exception as ex:
                 self._logger.exception(ex)
 
@@ -62,7 +68,14 @@ class UnsplashTaskHandler(TaskHandler):
 
         return True
 
-    def _handle_url(self, category: str, url: str, reply: Reply) -> None:
+    def _handle_url(
+        self,
+        category: str,
+        url: str,
+        reply: Reply,
+        num: int,
+        total: int,
+    ) -> None:
         image_id = self._id_re.findall(url)[0]
         image_info = self._fetch_image_info(image_id)
         image_bytes = self._download_image(image_info)
@@ -77,13 +90,16 @@ class UnsplashTaskHandler(TaskHandler):
                 websource=websource,
                 image_bytes=image_bytes,
             )
-            reply(f'`{image_id}`: [uploaded]({escape_markdown(download_url)})')
+            download_url_text = escape_markdown(download_url)
+            reply(
+                f'{num}/{total}: `{image_id}`: [uploaded]({download_url_text})'
+            )
 
             self._logger.debug(
                 f'download url of {image_id} is {download_url}',
             )
         except ConflictException:
-            reply(f'`{image_id}`: already found')
+            reply(f'{num}/{total}: `{image_id}`: already found')
 
             self._logger.debug(
                 f'image {image_id} already found',
